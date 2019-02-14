@@ -29,6 +29,8 @@ void Oscillator::setSampleRate(double sampleRate)
 
 void Oscillator::updatePhaseIncrement()
 {
+	// don't update phase position, because we actually want phase to be conserved if the frequency changes
+	// that way we won't hear a nasty clip as the phase resets
 	mPhaseIncrement = mFrequency / mSampleRate;
 }
 
