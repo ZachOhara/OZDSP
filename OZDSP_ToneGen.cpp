@@ -29,22 +29,14 @@ enum ELayout
 };
 
 OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
-	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo),
-	mLevel(0.5)
+	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 {
 	TRACE;
 
 	//arguments are: name, defaultVal, minVal, maxVal, step, label
-	GetParam(kPitchPid)->InitDouble("Frequency", 440.0, 50.0, 10000.0, 0.01, "Hz");
-	GetParam(kPitchPid)->SetShape(3.0);
-	GetParam(kVolumePid)->InitDouble("Volume", 50.0, 0.0, 100.0, 0.01, "");
-	GetParam(kWaveformPid)->InitEnum("Waveform", 0, kNumOscillatorModes);
-
-	// Set up waveforms
-	GetParam(kWaveformPid)->SetDisplayText(0, "Sine");
-	GetParam(kWaveformPid)->SetDisplayText(1, "Triangle");
-	GetParam(kWaveformPid)->SetDisplayText(2, "Square");
-	GetParam(kWaveformPid)->SetDisplayText(3, "Sawtooth");
+	InitFrequencyParameter(GetParam(kPitchPid));
+	InitVolumeParameter(GetParam(kVolumePid));
+	InitWaveformParameter(GetParam(kWaveformPid));
 
 	IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
 	pGraphics->AttachBackground(BACKGROUND_RID, BACKGROUND_FN);
@@ -60,6 +52,7 @@ OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 	AttachGraphics(pGraphics);
 
 	CreatePresets();
+	ForceUpdateParams(this);
 }
 
 OZDSP_ToneGen::~OZDSP_ToneGen() {}
@@ -77,7 +70,7 @@ void OZDSP_ToneGen::ProcessDoubleReplacing(double** inputs, double** outputs, in
 	for (int i = 0; i < nFrames; i++)
 	{
 		double sampleValue = mOscillator.GetNextSample();
-		sampleValue *= mLevel;
+		sampleValue = mVolumeControl.GetAdjustedSample(sampleValue);
 		for (int j = 0; j < nChannels; j++)
 		{
 			outputs[j][i] = sampleValue;
@@ -105,15 +98,10 @@ void OZDSP_ToneGen::OnParamChange(int paramIdx)
 		mOscillator.SetMode(GetParam(kWaveformPid)->Int());
 		break;
 	case kVolumePid:
-		mLevel = ScaleParam(GetParam(kVolumePid)->Value() / 100.0);
+		HandleVolumeParamChange(GetParam(kVolumePid), &mVolumeControl);
 		break;
 
 	default:
 		break;
 	}
-}
-
-double OZDSP_ToneGen::ScaleParam(double raw)
-{
-	return pow(raw, exp(1));
 }

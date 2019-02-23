@@ -3,7 +3,9 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+#include "../OZDSP_Common/CommonParameters.h"
 #include "../OZDSP_Common/Oscillator.h"
+#include "../OZDSP_Common/VolumeControl.h"
 
 class OZDSP_ToneGen : public IPlug
 {
@@ -16,11 +18,8 @@ public:
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
-	double mLevel;
-
 	Oscillator mOscillator;
-
-	static double ScaleParam(double raw);
+	VolumeControl mVolumeControl;
 
 	void CreatePresets();
 };
