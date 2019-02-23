@@ -20,7 +20,7 @@ private:
 
 	Oscillator mOscillator;
 
-	static double scaleParam(double raw);
+	static double ScaleParam(double raw);
 
 	void CreatePresets();
 };

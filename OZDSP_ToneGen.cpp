@@ -66,14 +66,7 @@ OZDSP_ToneGen::~OZDSP_ToneGen() {}
 
 void OZDSP_ToneGen::CreatePresets()
 {
-	// TODO
-	/*
-	MakePreset("clean", 100.0);
-	MakePreset("distorted", 80.0);
-	MakePreset("wooo", 40.0);
-	MakePreset("waaa", 20.0);
-	MakePreset("buzz", 0.1);
-	*/
+	// No presets
 }
 
 void OZDSP_ToneGen::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
@@ -83,7 +76,7 @@ void OZDSP_ToneGen::ProcessDoubleReplacing(double** inputs, double** outputs, in
 
 	for (int i = 0; i < nFrames; i++)
 	{
-		double sampleValue = mOscillator.getNextSample();
+		double sampleValue = mOscillator.GetNextSample();
 		sampleValue *= mLevel;
 		for (int j = 0; j < nChannels; j++)
 		{
@@ -96,7 +89,7 @@ void OZDSP_ToneGen::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
-	mOscillator.setSampleRate(GetSampleRate());
+	mOscillator.SetSampleRate(GetSampleRate());
 }
 
 void OZDSP_ToneGen::OnParamChange(int paramIdx)
@@ -106,13 +99,13 @@ void OZDSP_ToneGen::OnParamChange(int paramIdx)
 	switch (paramIdx)
 	{
 	case kPitchPid:
-		mOscillator.setFrequency(GetParam(kPitchPid)->Value());
+		mOscillator.SetFrequency(GetParam(kPitchPid)->Value());
 		break;
 	case kWaveformPid:
-		mOscillator.setMode(GetParam(kWaveformPid)->Int());
+		mOscillator.SetMode(GetParam(kWaveformPid)->Int());
 		break;
 	case kVolumePid:
-		mLevel = scaleParam(GetParam(kVolumePid)->Value() / 100.0);
+		mLevel = ScaleParam(GetParam(kVolumePid)->Value() / 100.0);
 		break;
 
 	default:
@@ -120,7 +113,7 @@ void OZDSP_ToneGen::OnParamChange(int paramIdx)
 	}
 }
 
-double OZDSP_ToneGen::scaleParam(double raw)
+double OZDSP_ToneGen::ScaleParam(double raw)
 {
 	return pow(raw, exp(1));
 }

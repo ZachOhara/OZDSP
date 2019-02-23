@@ -10,31 +10,24 @@ Oscillator::~Oscillator()
 {
 }
 
-void Oscillator::setMode(int newMode)
+void Oscillator::SetMode(int newMode)
 {
 	mOscillatorMode = newMode;
 }
 
-void Oscillator::setFrequency(double frequency)
+void Oscillator::SetFrequency(double frequency)
 {
 	mFrequency = frequency;
-	updatePhaseIncrement();
+	UpdatePhaseIncrement();
 }
 
-void Oscillator::setSampleRate(double sampleRate)
+void Oscillator::SetSampleRate(double sampleRate)
 {
 	mSampleRate = sampleRate;
-	updatePhaseIncrement();
+	UpdatePhaseIncrement();
 }
 
-void Oscillator::updatePhaseIncrement()
-{
-	// don't update phase position, because we actually want phase to be conserved if the frequency changes
-	// that way we won't hear a nasty clip as the phase resets
-	mPhaseIncrement = mFrequency / mSampleRate;
-}
-
-double Oscillator::getNextSample()
+double Oscillator::GetNextSample()
 {
 	double sampleValue = 0;
 	switch (mOscillatorMode)
@@ -69,10 +62,20 @@ double Oscillator::getNextSample()
 		sampleValue = 0;
 		break;
 	}
+
+	// Update the phase for the next cycle
 	mPhasePosition += mPhaseIncrement;
 	if (mPhasePosition > 1)
 	{
 		mPhasePosition -= 1;
 	}
+
 	return sampleValue;
+}
+
+void Oscillator::UpdatePhaseIncrement()
+{
+	// don't update phase position, because we actually want phase to be conserved if the frequency changes
+	// that way we won't hear a nasty clip as the phase resets
+	mPhaseIncrement = mFrequency / mSampleRate;
 }

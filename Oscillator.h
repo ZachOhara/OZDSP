@@ -1,8 +1,7 @@
 #ifndef __OSCILLATOR__
 #define __OSCILLATOR__
 
-#include <iostream>
-#include <math.h>
+#include <cmath>
 
 # define M_PI 3.14159265358979323846
 
@@ -20,11 +19,11 @@ public:
 	Oscillator();
 	~Oscillator();
 
-	void setMode(int newMode);
-	void setFrequency(double frequency);
-	void setSampleRate(double sampleRate);
+	void SetMode(int newMode);
+	void SetFrequency(double frequency);
+	void SetSampleRate(double sampleRate);
 
-	double getNextSample();
+	double GetNextSample();
 
 private:
 	int mOscillatorMode;
@@ -35,7 +34,7 @@ private:
 	double mPhasePosition;
 	double mPhaseIncrement;
 
-	void updatePhaseIncrement();
+	void UpdatePhaseIncrement();
 };
 
 #endif // !__OSCILLATOR__
