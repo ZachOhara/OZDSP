@@ -22,10 +22,20 @@ enum ELayout
 
 	kPitchKnobX = 15,
 	kPitchKnobY = 50,
+
 	kVolumeKnobX = 155,
 	kVolumeKnobY = 90,
+
 	kWaveSelectX = 155,
 	kWaveSelectY = 10,
+
+	kPitchLabelX = 15,
+	kPitchLabelY = 160,
+	kPitchLabelWidth = 120,
+
+	kVolumeLabelX = 155,
+	kVolumeLabelY = 160,
+	kVolumeLabelWidth = 80
 };
 
 OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
@@ -48,6 +58,13 @@ OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 	pGraphics->AttachControl(new IKnobMultiControl(this, kPitchKnobX, kPitchKnobY, kPitchPid, &knob120));
 	pGraphics->AttachControl(new IKnobMultiControl(this, kVolumeKnobX, kVolumeKnobY, kVolumePid, &knob80));
 	pGraphics->AttachControl(new ISwitchControl(this, kWaveSelectX, kWaveSelectY, kWaveformPid, &waveSelect));
+
+	mpPitchLabel = new ParamValueLabel(this, kPitchPid, kPitchLabelX, kPitchLabelY, kPitchLabelWidth);
+	InitFrequencyLabel(mpPitchLabel);
+	mpVolumeLabel = new ParamValueLabel(this, kVolumePid, kVolumeLabelX, kVolumeLabelY, kVolumeLabelWidth);
+
+	pGraphics->AttachControl(mpPitchLabel);
+	pGraphics->AttachControl(mpVolumeLabel);
 
 	AttachGraphics(pGraphics);
 
@@ -93,12 +110,14 @@ void OZDSP_ToneGen::OnParamChange(int paramIdx)
 	{
 	case kPitchPid:
 		mOscillator.SetFrequency(GetParam(kPitchPid)->Value());
+		mpPitchLabel->UpdateDisplay();
 		break;
 	case kWaveformPid:
 		mOscillator.SetMode(GetParam(kWaveformPid)->Int());
 		break;
 	case kVolumePid:
 		HandleVolumeParamChange(GetParam(kVolumePid), &mVolumeControl);
+		mpVolumeLabel->UpdateDisplay();
 		break;
 
 	default:

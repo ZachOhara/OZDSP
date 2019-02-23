@@ -5,6 +5,7 @@
 
 #include "../OZDSP_Common/CommonParameters.h"
 #include "../OZDSP_Common/Oscillator.h"
+#include "../OZDSP_Common/ParamValueLabel.h"
 #include "../OZDSP_Common/VolumeControl.h"
 
 class OZDSP_ToneGen : public IPlug
@@ -20,6 +21,9 @@ public:
 private:
 	Oscillator mOscillator;
 	VolumeControl mVolumeControl;
+
+	ParamValueLabel* mpPitchLabel;
+	ParamValueLabel* mpVolumeLabel;
 
 	void CreatePresets();
 };
