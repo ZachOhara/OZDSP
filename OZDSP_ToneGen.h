@@ -3,7 +3,7 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
-#include "Oscillator.h"
+#include "../OZDSP_Common/Oscillator.h"
 
 class OZDSP_ToneGen : public IPlug
 {
