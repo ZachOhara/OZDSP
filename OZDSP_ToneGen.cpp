@@ -15,20 +15,6 @@ enum EParams
 
 enum ELayout
 {
-	//kWidth = GUI_WIDTH,
-	//kHeight = GUI_HEIGHT,
-	kKnobFrames = 128,
-	kWaveformFrames = 4,
-
-	//kPitchKnobX = 15,
-	//kPitchKnobY = 50,
-
-	//kVolumeKnobX = 155,
-	//kVolumeKnobY = 90,
-
-	//kWaveSelectX = 155,
-	//kWaveSelectY = 10,
-
 	kPitchLabelX = 15,
 	kPitchLabelY = 160,
 	kPitchLabelWidth = 120,
@@ -58,9 +44,9 @@ OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 {	
 	GetGraphics()->AttachBackground(BACKGROUND_RID, BACKGROUND_FN);
 
-	IBitmap knob80 = GetGraphics()->LoadIBitmap(KNOB_80_RID, KNOB_80_FN, kKnobFrames);
-	IBitmap knob120 = GetGraphics()->LoadIBitmap(KNOB_120_RID, KNOB_120_FN, kKnobFrames);
-	IBitmap waveSelect = GetGraphics()->LoadIBitmap(WAVEFORMS_RID, WAVEFORMS_FN, kWaveformFrames);
+	IBitmap knob80 = GetGraphics()->LoadIBitmap(KNOB_80_RID, KNOB_80_FN, KNOB_FRAMES);
+	IBitmap knob120 = GetGraphics()->LoadIBitmap(KNOB_120_RID, KNOB_120_FN, KNOB_FRAMES);
+	IBitmap waveSelect = GetGraphics()->LoadIBitmap(WAVEFORMS_RID, WAVEFORMS_FN, WAVESELECT_FRAMES);
 
 	InitializeParameter(kParameterList[0], knob120);
 	InitializeParameter(kParameterList[1], knob80);
@@ -74,10 +60,7 @@ OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 	GetGraphics()->AttachControl(mpPitchLabel);
 	GetGraphics()->AttachControl(mpVolumeLabel);
 
-	AttachGraphics(GetGraphics());
-
-	CreatePresets();
-	ForceUpdateParams(this);
+	FinishConstruction();
 }
 
 OZDSP_ToneGen::~OZDSP_ToneGen() {}

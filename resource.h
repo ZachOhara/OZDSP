@@ -69,6 +69,10 @@ instrument determined by PLUG _IS _INST
 #define KNOB_120_FN "resources/img/knob_teal120.png"
 #define WAVEFORMS_FN "resources/img/waveforms.png"
 
+ // Number of frames in the bitmaps
+#define KNOB_FRAMES 128
+#define WAVESELECT_FRAMES 4
+
 // GUI default dimensions
 #define GUI_WIDTH 250
 #define GUI_HEIGHT 210
