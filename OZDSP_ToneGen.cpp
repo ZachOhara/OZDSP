@@ -15,19 +15,19 @@ enum EParams
 
 enum ELayout
 {
-	kWidth = GUI_WIDTH,
-	kHeight = GUI_HEIGHT,
+	//kWidth = GUI_WIDTH,
+	//kHeight = GUI_HEIGHT,
 	kKnobFrames = 128,
 	kWaveformFrames = 4,
 
-	kPitchKnobX = 15,
-	kPitchKnobY = 50,
+	//kPitchKnobX = 15,
+	//kPitchKnobY = 50,
 
-	kVolumeKnobX = 155,
-	kVolumeKnobY = 90,
+	//kVolumeKnobX = 155,
+	//kVolumeKnobY = 90,
 
-	kWaveSelectX = 155,
-	kWaveSelectY = 10,
+	//kWaveSelectX = 155,
+	//kWaveSelectY = 10,
 
 	kPitchLabelX = 15,
 	kPitchLabelY = 160,
@@ -38,35 +38,43 @@ enum ELayout
 	kVolumeLabelWidth = 80
 };
 
-OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
-	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
+std::vector<ParameterInfo> kParameterList  = 
 {
-	TRACE;
+	ParameterInfo()
+		.InitParam("Pitch", kPitchPid, 15, 50)
+		.MakeFrequencyParam(),
+	ParameterInfo()
+		.InitParam("Volume", kVolumePid, 155, 90)
+		.MakeVolumeReductionParam(),
+	ParameterInfo()
+		.InitParam("Waveform", kWaveformPid, 155, 10)
+		.MakeWaveformParam()
+};
 
-	//arguments are: name, defaultVal, minVal, maxVal, step, label
-	InitFrequencyParameter(GetParam(kPitchPid));
-	InitVolumeParameter(GetParam(kVolumePid));
-	InitWaveformParameter(GetParam(kWaveformPid));
+OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
+	CommonPlugBase(instanceInfo, kNumParams, kNumPrograms,
+		MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT),
+		COMMONPLUG_CTOR_PARAMS)
+{	
+	GetGraphics()->AttachBackground(BACKGROUND_RID, BACKGROUND_FN);
 
-	IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
-	pGraphics->AttachBackground(BACKGROUND_RID, BACKGROUND_FN);
+	IBitmap knob80 = GetGraphics()->LoadIBitmap(KNOB_80_RID, KNOB_80_FN, kKnobFrames);
+	IBitmap knob120 = GetGraphics()->LoadIBitmap(KNOB_120_RID, KNOB_120_FN, kKnobFrames);
+	IBitmap waveSelect = GetGraphics()->LoadIBitmap(WAVEFORMS_RID, WAVEFORMS_FN, kWaveformFrames);
 
-	IBitmap knob80 = pGraphics->LoadIBitmap(KNOB_80_RID, KNOB_80_FN, kKnobFrames);
-	IBitmap knob120 = pGraphics->LoadIBitmap(KNOB_120_RID, KNOB_120_FN, kKnobFrames);
-	IBitmap waveSelect = pGraphics->LoadIBitmap(WAVEFORMS_RID, WAVEFORMS_FN, kWaveformFrames);
+	InitializeParameter(kParameterList[0], knob120);
+	InitializeParameter(kParameterList[1], knob80);
+	InitializeParameter(kParameterList[2], waveSelect);
 
-	pGraphics->AttachControl(new IKnobMultiControl(this, kPitchKnobX, kPitchKnobY, kPitchPid, &knob120));
-	pGraphics->AttachControl(new IKnobMultiControl(this, kVolumeKnobX, kVolumeKnobY, kVolumePid, &knob80));
-	pGraphics->AttachControl(new ISwitchControl(this, kWaveSelectX, kWaveSelectY, kWaveformPid, &waveSelect));
-
+	// TODO clean up this
 	mpPitchLabel = new ParamValueLabel(this, kPitchPid, kPitchLabelX, kPitchLabelY, kPitchLabelWidth);
 	InitFrequencyLabel(mpPitchLabel);
 	mpVolumeLabel = new ParamValueLabel(this, kVolumePid, kVolumeLabelX, kVolumeLabelY, kVolumeLabelWidth);
 
-	pGraphics->AttachControl(mpPitchLabel);
-	pGraphics->AttachControl(mpVolumeLabel);
+	GetGraphics()->AttachControl(mpPitchLabel);
+	GetGraphics()->AttachControl(mpVolumeLabel);
 
-	AttachGraphics(pGraphics);
+	AttachGraphics(GetGraphics());
 
 	CreatePresets();
 	ForceUpdateParams(this);
@@ -97,15 +105,15 @@ void OZDSP_ToneGen::ProcessDoubleReplacing(double** inputs, double** outputs, in
 
 void OZDSP_ToneGen::Reset()
 {
-	TRACE;
-	IMutexLock lock(this);
+	CommonPlugBase::Reset();
 	mOscillator.SetSampleRate(GetSampleRate());
 }
 
 void OZDSP_ToneGen::OnParamChange(int paramIdx)
 {
-	IMutexLock lock(this);
+	CommonPlugBase::OnParamChange(paramIdx);
 
+	// TODO clean this up
 	switch (paramIdx)
 	{
 	case kPitchPid:
@@ -119,7 +127,6 @@ void OZDSP_ToneGen::OnParamChange(int paramIdx)
 		HandleVolumeParamChange(GetParam(kVolumePid), &mVolumeControl);
 		mpVolumeLabel->UpdateDisplay();
 		break;
-
 	default:
 		break;
 	}

@@ -3,12 +3,16 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+#include "../OZDSP_Common/CommonPlugBase.h"
+// #include "../OZDSP_Common/ParameterFactory.h"
+#include "../OZDSP_Common/ParameterInfo.h"
+
 #include "../OZDSP_Common/CommonParameters.h"
 #include "../OZDSP_Common/Oscillator.h"
 #include "../OZDSP_Common/ParamValueLabel.h"
 #include "../OZDSP_Common/VolumeControl.h"
 
-class OZDSP_ToneGen : public IPlug
+class OZDSP_ToneGen : public CommonPlugBase
 {
 public:
 	OZDSP_ToneGen(IPlugInstanceInfo instanceInfo);
