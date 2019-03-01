@@ -27,30 +27,28 @@ enum ELayout
 std::vector<ParameterInfo> kParameterList  = 
 {
 	ParameterInfo()
-		.InitParam("Pitch", kPitchPid, 15, 50)
+		.InitParam("Pitch", kPitchPid, KNOB_120_ID, 15, 50)
 		.MakeFrequencyParam(),
 	ParameterInfo()
-		.InitParam("Volume", kVolumePid, 155, 90)
-		.MakeVolumeReductionParam(),
+		.InitParam("Waveform", kWaveformPid, WAVESELECT_ID, 155, 10)
+		.MakeWaveformParam(),
 	ParameterInfo()
-		.InitParam("Waveform", kWaveformPid, 155, 10)
-		.MakeWaveformParam()
+		.InitParam("Volume", kVolumePid, KNOB_80_ID, 155, 90)
+		.MakeVolumeReductionParam(),
 };
 
 OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 	CommonPlugBase(instanceInfo, kNumParams, kNumPrograms,
 		MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT),
 		COMMONPLUG_CTOR_PARAMS)
-{	
-	GetGraphics()->AttachBackground(BACKGROUND_RID, BACKGROUND_FN);
+{
+	SetBackground(BACKGROUND_ID, BACKGROUND_FN);
 
-	IBitmap knob80 = GetGraphics()->LoadIBitmap(KNOB_80_RID, KNOB_80_FN, KNOB_FRAMES);
-	IBitmap knob120 = GetGraphics()->LoadIBitmap(KNOB_120_RID, KNOB_120_FN, KNOB_FRAMES);
-	IBitmap waveSelect = GetGraphics()->LoadIBitmap(WAVEFORMS_RID, WAVEFORMS_FN, WAVESELECT_FRAMES);
+	RegisterBitmap(KNOB_80_ID, KNOB_80_FN, KNOB_FRAMES);
+	RegisterBitmap(KNOB_120_ID, KNOB_120_FN, KNOB_FRAMES);
+	RegisterBitmap(WAVESELECT_ID, WAVESELECT_FN, WAVESELECT_FRAMES);
 
-	InitializeParameter(kParameterList[0], knob120);
-	InitializeParameter(kParameterList[1], knob80);
-	InitializeParameter(kParameterList[2], waveSelect);
+	AddParameters(kParameterList);
 
 	// TODO clean up this
 	mpPitchLabel = new ParamValueLabel(this, kPitchPid, kPitchLabelX, kPitchLabelY, kPitchLabelWidth);

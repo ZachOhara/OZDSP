@@ -58,16 +58,16 @@ instrument determined by PLUG _IS _INST
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // Unique IDs for each image resource.
-#define BACKGROUND_RID 101
-#define KNOB_80_RID 201
-#define KNOB_120_RID 202
-#define WAVEFORMS_RID 301
+#define BACKGROUND_ID 101
+#define KNOB_80_ID 201
+#define KNOB_120_ID 202
+#define WAVESELECT_ID 301
 
 // Image resource locations for this plug.
 #define BACKGROUND_FN "resources/img/ToneGen.png"
 #define KNOB_80_FN "resources/img/knob_teal80.png"
 #define KNOB_120_FN "resources/img/knob_teal120.png"
-#define WAVEFORMS_FN "resources/img/waveforms.png"
+#define WAVESELECT_FN "resources/img/waveforms.png"
 
  // Number of frames in the bitmaps
 #define KNOB_FRAMES 128
