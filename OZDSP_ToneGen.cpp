@@ -40,6 +40,10 @@ OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 
 	AddParameters(kParameterList);
 
+	AddOscillatorFrequencyBridge(kPitchPid, &mOscillator);
+	AddOscillatorWaveformBridge(kWaveformPid, &mOscillator);
+	AddVolumeParamBridge(kVolumePid, &mVolumeProcessor);
+
 	FinishConstruction();
 }
 
@@ -70,32 +74,4 @@ void OZDSP_ToneGen::Reset()
 {
 	CommonPlugBase::Reset();
 	mOscillator.SetSampleRate(GetSampleRate());
-}
-
-void OZDSP_ToneGen::OnParamChange(int paramIdx)
-{
-	CommonPlugBase::OnParamChange(paramIdx);
-
-	// TODO clean this up
-	switch (paramIdx)
-	{
-	case kPitchPid:
-		mOscillator.SetFrequency(GetParam(kPitchPid)->Value());
-		break;
-	case kWaveformPid:
-		mOscillator.SetMode(GetParam(kWaveformPid)->Int());
-		break;
-	case kVolumePid:
-		if (GetParam(kVolumePid)->Value() == GetParam(kVolumePid)->GetMin())
-		{
-			mVolumeProcessor.SetZero();
-		}
-		else
-		{
-			mVolumeProcessor.SetDecibels(GetParam(kVolumePid)->Value());
-		}
-		break;
-	default:
-		break;
-	}
 }
