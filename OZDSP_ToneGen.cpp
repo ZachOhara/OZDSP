@@ -1,6 +1,5 @@
 #include "OZDSP_ToneGen.h"
 #include "IPlug_include_in_plug_src.h"
-#include "IControl.h"
 #include "resource.h"
 
 const int kNumPrograms = 0;
@@ -59,7 +58,7 @@ void OZDSP_ToneGen::ProcessDoubleReplacing(double** inputs, double** outputs, in
 	for (int i = 0; i < nFrames; i++)
 	{
 		double sampleValue = mOscillator.GetNextSample();
-		sampleValue = mVolumeControl.GetAdjustedSample(sampleValue);
+		sampleValue = mVolumeProcessor.GetAdjustedSample(sampleValue);
 		for (int j = 0; j < nChannels; j++)
 		{
 			outputs[j][i] = sampleValue;
@@ -87,7 +86,14 @@ void OZDSP_ToneGen::OnParamChange(int paramIdx)
 		mOscillator.SetMode(GetParam(kWaveformPid)->Int());
 		break;
 	case kVolumePid:
-		HandleVolumeParamChange(GetParam(kVolumePid), &mVolumeControl);
+		if (GetParam(kVolumePid)->Value() == GetParam(kVolumePid)->GetMin())
+		{
+			mVolumeProcessor.SetZero();
+		}
+		else
+		{
+			mVolumeProcessor.SetDecibels(GetParam(kVolumePid)->Value());
+		}
 		break;
 	default:
 		break;

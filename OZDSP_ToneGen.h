@@ -4,11 +4,10 @@
 #include "IPlug_include_in_plug_hdr.h"
 
 #include "../OZDSP_Common/CommonPlugBase.h"
-#include "../OZDSP_Common/ParameterInfo.h"
+#include "../OZDSP_Common/parameter/ParameterInfo.h"
 
-#include "../OZDSP_Common/CommonParameters.h"
-#include "../OZDSP_Common/Oscillator.h"
-#include "../OZDSP_Common/VolumeControl.h"
+#include "../OZDSP_Common/processing/Oscillator.h"
+#include "../OZDSP_Common/processing/VolumeProcessor.h"
 
 class OZDSP_ToneGen : public CommonPlugBase
 {
@@ -25,7 +24,7 @@ protected:
 
 private:
 	Oscillator mOscillator;
-	VolumeControl mVolumeControl;
+	VolumeProcessor mVolumeProcessor;
 };
 
 #endif
