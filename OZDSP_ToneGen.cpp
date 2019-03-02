@@ -13,27 +13,18 @@ enum EParams
 	kNumParams
 };
 
-enum ELayout
-{
-	kPitchLabelX = 15,
-	kPitchLabelY = 160,
-	kPitchLabelWidth = 120,
-
-	kVolumeLabelX = 155,
-	kVolumeLabelY = 160,
-	kVolumeLabelWidth = 80
-};
-
-std::vector<ParameterInfo> kParameterList  = 
+std::vector<ParameterInfo> kParameterList = 
 {
 	ParameterInfo()
 		.InitParam("Pitch", kPitchPid, KNOB_120_ID, 15, 50)
+		.InitLabel()
 		.MakeFrequencyParam(),
 	ParameterInfo()
 		.InitParam("Waveform", kWaveformPid, WAVESELECT_ID, 155, 10)
 		.MakeWaveformParam(),
 	ParameterInfo()
 		.InitParam("Volume", kVolumePid, KNOB_80_ID, 155, 90)
+		.InitLabel()
 		.MakeVolumeReductionParam(),
 };
 
@@ -49,14 +40,6 @@ OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 	RegisterBitmap(WAVESELECT_ID, WAVESELECT_FN, WAVESELECT_FRAMES);
 
 	AddParameters(kParameterList);
-
-	// TODO clean up this
-	mpPitchLabel = new ParamValueLabel(this, kPitchPid, kPitchLabelX, kPitchLabelY, kPitchLabelWidth);
-	InitFrequencyLabel(mpPitchLabel);
-	mpVolumeLabel = new ParamValueLabel(this, kVolumePid, kVolumeLabelX, kVolumeLabelY, kVolumeLabelWidth);
-
-	GetGraphics()->AttachControl(mpPitchLabel);
-	GetGraphics()->AttachControl(mpVolumeLabel);
 
 	FinishConstruction();
 }
@@ -99,14 +82,12 @@ void OZDSP_ToneGen::OnParamChange(int paramIdx)
 	{
 	case kPitchPid:
 		mOscillator.SetFrequency(GetParam(kPitchPid)->Value());
-		mpPitchLabel->UpdateDisplay();
 		break;
 	case kWaveformPid:
 		mOscillator.SetMode(GetParam(kWaveformPid)->Int());
 		break;
 	case kVolumePid:
 		HandleVolumeParamChange(GetParam(kVolumePid), &mVolumeControl);
-		mpVolumeLabel->UpdateDisplay();
 		break;
 	default:
 		break;
