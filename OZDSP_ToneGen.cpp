@@ -30,7 +30,9 @@ std::vector<ParameterInfo> kParameterList =
 OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 	CommonPlugBase(instanceInfo, kNumParams, kNumPrograms,
 		MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT),
-		COMMONPLUG_CTOR_PARAMS)
+		COMMONPLUG_CTOR_PARAMS),
+	mOscillator(this),
+	mVolumeProcessor(this)
 {
 	SetBackground(BACKGROUND_ID, BACKGROUND_FN);
 
@@ -40,14 +42,19 @@ OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
 
 	AddParameters(kParameterList);
 
-	AddOscillatorFrequencyBridge(kPitchPid, &mOscillator);
-	AddOscillatorWaveformBridge(kWaveformPid, &mOscillator);
-	AddVolumeParamBridge(kVolumePid, &mVolumeProcessor);
+	RegisterProcessor(&mOscillator);
+	RegisterProcessorParameter(&mOscillator, kPitchPid, kOscillatorFrequencyParam);
+	RegisterProcessorParameter(&mOscillator, kWaveformPid, kOscillatorModeParam);
+
+	RegisterProcessor(&mVolumeProcessor);
+	RegisterProcessorParameter(&mVolumeProcessor, kVolumePid, kVolumeProcessorDecibelsParam);
 
 	FinishConstruction();
 }
 
-OZDSP_ToneGen::~OZDSP_ToneGen() {}
+OZDSP_ToneGen::~OZDSP_ToneGen()
+{
+}
 
 void OZDSP_ToneGen::CreatePresets()
 {
@@ -68,10 +75,4 @@ void OZDSP_ToneGen::ProcessDoubleReplacing(double** inputs, double** outputs, in
 			outputs[j][i] = sampleValue;
 		}
 	}
-}
-
-void OZDSP_ToneGen::Reset()
-{
-	CommonPlugBase::Reset();
-	mOscillator.SetSampleRate(GetSampleRate());
 }

@@ -15,7 +15,6 @@ public:
 	OZDSP_ToneGen(IPlugInstanceInfo instanceInfo);
 	~OZDSP_ToneGen();
 
-	void Reset() override;
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames) override;
 
 protected:
