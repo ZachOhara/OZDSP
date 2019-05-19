@@ -7,47 +7,45 @@ const int kNumPrograms = 0;
 enum EParams
 {
 	kPitchPid,
-	kWaveformPid,
 	kVolumePid,
+	kWaveformPid,
 	kNumParams
 };
 
-std::vector<ParameterInfo> kParameterList = 
+std::vector<ParameterInfo> kParameterList =
 {
 	ParameterInfo()
-		.InitParam("Pitch", kPitchPid, KNOB_120_ID, 15, 50)
+		.InitParam("Pitch", kPitchPid, PITCH_CONTROL_ID, 26, 50)
 		.InitLabel()
 		.MakeFrequencyParam(),
 	ParameterInfo()
-		.InitParam("Waveform", kWaveformPid, WAVESELECT_ID, 155, 10)
-		.MakeWaveformParam(),
-	ParameterInfo()
-		.InitParam("Volume", kVolumePid, KNOB_80_ID, 155, 90)
+		.InitParam("Volume", kVolumePid, VOLUME_CONTROL_ID, 150, 85)
 		.InitLabel()
 		.MakeVolumeReductionParam(),
+	ParameterInfo()
+		.InitParam("Waveform", kWaveformPid, WAVEFORM_CONTROL_ID, 155, 10)
+		.MakeWaveformParam(),
 };
 
 OZDSP_ToneGen::OZDSP_ToneGen(IPlugInstanceInfo instanceInfo) :
-	CommonPlugBase(instanceInfo, kNumParams, kNumPrograms,
+	CorePlugBase(instanceInfo, kNumParams, kNumPrograms,
 		MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT),
-		COMMONPLUG_CTOR_PARAMS),
-	mOscillator(this),
-	mVolumeProcessor(this)
+		COMMONPLUG_CTOR_PARAMS)
 {
 	SetBackground(BACKGROUND_ID, BACKGROUND_FN);
 
-	RegisterBitmap(KNOB_80_ID, KNOB_80_FN, KNOB_FRAMES);
-	RegisterBitmap(KNOB_120_ID, KNOB_120_FN, KNOB_FRAMES);
-	RegisterBitmap(WAVESELECT_ID, WAVESELECT_FN, WAVESELECT_FRAMES);
+	RegisterBitmap(PITCH_CONTROL_ID, PITCH_CONTROL_FN, PITCH_CONTROL_FRAMES);
+	RegisterBitmap(VOLUME_CONTROL_ID, VOLUME_CONTROL_FN, VOLUME_CONTROL_FRAMES);
+	RegisterBitmap(WAVEFORM_CONTROL_ID, WAVEFORM_CONTROL_FN, WAVEFORM_CONTROL_FRAMES);
 
-	AddParameters(kParameterList);
+	AddParameterList(kParameterList);
 
 	RegisterProcessor(&mOscillator);
-	RegisterProcessorParameter(&mOscillator, kPitchPid, kOscillatorFrequencyParam);
-	RegisterProcessorParameter(&mOscillator, kWaveformPid, kOscillatorModeParam);
+	mOscillator.RegisterParameter(kPitchPid, Oscillator::kFrequencyParam);
+	mOscillator.RegisterParameter(kWaveformPid, Oscillator::kWaveformParam);
 
 	RegisterProcessor(&mVolumeProcessor);
-	RegisterProcessorParameter(&mVolumeProcessor, kVolumePid, kVolumeProcessorDecibelsParam);
+	mVolumeProcessor.RegisterParameter(kVolumePid, VolumeProcessor::kDecibelsParam);
 
 	FinishConstruction();
 }
